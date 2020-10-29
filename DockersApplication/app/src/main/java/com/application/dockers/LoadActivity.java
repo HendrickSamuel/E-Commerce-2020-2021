@@ -21,26 +21,32 @@ import java.io.ObjectOutputStream;
 
 import protocol.IOBREP.Container;
 import protocol.IOBREP.DonneeGetContainers;
+import protocol.IOBREP.DonneeHandleContainerIn;
+import protocol.IOBREP.DonneeHandleContainerOut;
 import protocol.IOBREP.DonneeLogin;
 import protocol.IOBREP.ReponseIOBREP;
 import protocol.IOBREP.RequeteIOBREP;
 
 public class LoadActivity extends AppCompatActivity implements View.OnClickListener {
+    private String _boatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
 
-        new DownloadFilesTask().execute();
+        this._boatId = this.getIntent().getExtras().get("boatId").toString();
+
+        new GetContainersTask().execute();
     }
 
     @Override
     public void onClick(View v) {
         Toast.makeText(this, ""+v.getId()+" - " + ((Button)v).getText(), Toast.LENGTH_LONG).show();
+        new LoadContainerTask().execute(((Button)v).getText().toString());
     }
 
-    private class DownloadFilesTask extends AsyncTask<Void, Void, ReponseIOBREP> {
+    private class GetContainersTask extends AsyncTask<Void, Void, ReponseIOBREP> {
 
         protected void onPostExecute(ReponseIOBREP result) {
             if(result.get_chargeUtile() instanceof DonneeGetContainers)
@@ -79,14 +85,42 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
 
                 ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
                 System.out.println("Recu: " + rep.getCode());
-                if(rep.getCode() == ReponseIOBREP.OK)
-                {
-                    return rep;
-                }
-                else
-                {
-                    return null;
-                }
+                return rep;
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class LoadContainerTask extends AsyncTask<String, Void, ReponseIOBREP>{
+
+        @Override
+        protected void onPostExecute(ReponseIOBREP result) {
+            if(result.get_chargeUtile() instanceof DonneeHandleContainerOut)
+            {
+
+            }
+        }
+
+        @Override
+        protected ReponseIOBREP doInBackground(String... strings) {
+            ServerConnection sc = new ServerConnection();
+            System.out.println("connecté");
+
+            try {
+                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
+                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
+                DonneeHandleContainerOut dhco = new DonneeHandleContainerOut(strings[0]);
+                dhco.setIdBateau(LoadActivity.this._boatId);
+                RequeteIOBREP demande = new RequeteIOBREP(dhco);
+                oos.writeObject(demande);
+                oos.flush();
+
+                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
+                System.out.println("Recu: " + rep.getCode());
+                return rep;
 
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

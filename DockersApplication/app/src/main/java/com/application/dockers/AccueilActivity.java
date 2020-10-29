@@ -56,7 +56,7 @@ public class AccueilActivity extends AppCompatActivity {
                             if(rep.getCode() == ReponseIOBREP.OK)
                             {
                                 Intent intent = new Intent(AccueilActivity.this, BoatSelectedActivity.class);
-                                //intent.putExtra("boat",((DonneeBoatArrived)rep.get_chargeUtile()).get);
+                                intent.putExtra("boatId",((DonneeBoatArrived)rep.get_chargeUtile()).getIdContainer());
                                 startActivity(intent);
                             }
                             else
