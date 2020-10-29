@@ -45,33 +45,44 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/accueil_load_button"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="200dp"
-        android:background="#9C27B0"
-        android:drawableLeft="@drawable/ic_action_load"
-        android:drawablePadding="-10dp"
-        android:text="Chargement"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bateau" />
+
+        <EditText
+            android:id="@+id/input_boat_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="idBateau"
+            android:inputType="textPersonName" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/accueil_unload_button"
+        android:id="@+id/boat_arrived_button"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="100dp"
         android:background="#9C27B0"
-        android:drawableStart="@drawable/ic_action_unload"
-        android:drawableLeft="@drawable/ic_action_unload"
-        android:drawablePadding="-10dp"
-        android:text="Dechargement"
+        android:focusable="false"
+        android:text="Départ d'un bateau"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accueil_load_button" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
