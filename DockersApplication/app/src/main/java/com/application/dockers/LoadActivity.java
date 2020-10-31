@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -98,10 +99,30 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(ReponseIOBREP result) {
-            if(result.get_chargeUtile() instanceof DonneeHandleContainerOut)
+            if(result.getCode() == 200)
             {
+                if(result.get_chargeUtile() instanceof DonneeHandleContainerOut)
+                {
+                    DonneeHandleContainerOut dhco = (DonneeHandleContainerOut)result.get_chargeUtile();
+                    LinearLayout ll = findViewById(R.id.ll_boat_totreated);
+                    LinearLayout llok = findViewById(R.id.ll_boat_treated);
+                    View v = LoadActivity.this.findViewById(0);
 
+                    ViewGroup parent = (ViewGroup) v.getParent();
+
+                    if (parent != null) {
+                        parent.removeView(v);
+                    }
+
+                    llok.addView(v);
+                    v.setOnClickListener(null);
+                }
             }
+            else
+            {
+                System.out.println(result.get_message());
+            }
+
         }
 
         @Override
@@ -113,7 +134,6 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
                 ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
                 ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
                 DonneeHandleContainerOut dhco = new DonneeHandleContainerOut(strings[0]);
-                dhco.setIdBateau(LoadActivity.this._boatId);
                 RequeteIOBREP demande = new RequeteIOBREP(dhco);
                 oos.writeObject(demande);
                 oos.flush();
