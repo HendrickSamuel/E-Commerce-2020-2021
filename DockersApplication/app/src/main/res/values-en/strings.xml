@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DockersApplication</string>
+    <string name="login_user_hint">Name</string>
+    <string name="login_pwd_hint">Password</string>
+    <string name="login_button_hint">Login</string>
+
+    <string name="boat_Arrived">Boat arrived</string>
+    <string name="boat">Boat</string>
+    <string name="id_boat">Boat ID</string>
+    <string name="Welcome_text">Welcome: </string>
+
+    <string name="load">Load</string>
+    <string name="unload">Unload</string>
+    <string name="boat_Left">Boat departure</string>
+</resources>

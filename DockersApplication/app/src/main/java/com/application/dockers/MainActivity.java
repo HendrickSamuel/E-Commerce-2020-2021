@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                                 Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
                                 intent.putExtra("user",((EditText)MainActivity.this.findViewById(R.id.login_username)).getText());
                                 startActivity(intent);
+                                finish(); //ou empecher dans le manifest ?
                             }
                             else
                             {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4C4B4B"
+    android:background="@color/colorBackground"
     tools:context=".AccueilActivity">
 
     <androidx.cardview.widget.CardView
@@ -13,7 +13,6 @@
         android:layout_height="45dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
-        android:background="#9C27B0"
         app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +21,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#9C27B0">
+            android:background="@color/colorAccent">
 
             <TextView
                 android:id="@+id/accueil_username"
@@ -38,7 +37,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Bienvenue : "
+                android:text="@string/Welcome_text"
                 android:textAlignment="center"
                 android:textSize="24sp" />
 
@@ -48,9 +47,9 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="15dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,28 +60,59 @@
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bateau" />
+            android:text="@string/boat" />
 
         <EditText
             android:id="@+id/input_boat_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="idBateau"
+            android:hint="@string/id_boat"
             android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/boat_arrived_button"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:background="@color/colorAccent"
+            android:focusable="false"
+            android:text="@string/boat_Arrived"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/graphics_button"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:background="@color/colorAccent"
+            android:focusable="false"
+            android:text="graphiques"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:background="@color/colorAccent"
+            android:focusable="false"
+            android:text="LOGOUT"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/boat_arrived_button"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="100dp"
-        android:background="#9C27B0"
-        android:focusable="false"
-        android:text="Départ d'un bateau"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

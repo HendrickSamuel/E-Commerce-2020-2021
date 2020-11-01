@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">DockersApplication</string>
+    <string name="login_user_hint">Nom</string>
+    <string name="login_pwd_hint">Mot de passe</string>
+    <string name="login_button_hint">Se connecter</string>
+
+    <string name="boat_Arrived">Arrivée du bateau</string>
+    <string name="boat">Bateau</string>
+    <string name="id_boat">ID du Bateau</string>
+    <string name="Welcome_text">Bienvenue: </string>
+
+    <string name="load">Chargement</string>
+    <string name="unload">Déchargement</string>
+    <string name="boat_Left">Départ du bateau</string>
 </resources>

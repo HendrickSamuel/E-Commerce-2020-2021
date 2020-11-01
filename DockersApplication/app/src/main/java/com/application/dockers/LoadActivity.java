@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import protocol.IOBREP.Container;
+import protocol.IOBREP.DonneeEndContainerOut;
 import protocol.IOBREP.DonneeGetContainers;
 import protocol.IOBREP.DonneeHandleContainerIn;
 import protocol.IOBREP.DonneeHandleContainerOut;
@@ -37,6 +38,12 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_load);
 
         this._boatId = this.getIntent().getExtras().get("boatId").toString();
+        ((Button)this.findViewById(R.id.button_loading_done)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LoadContainerDoneTask().execute();
+            }
+        });
 
         new GetContainersTask().execute();
     }
@@ -135,6 +142,46 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
                 ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
                 DonneeHandleContainerOut dhco = new DonneeHandleContainerOut(strings[0]);
                 RequeteIOBREP demande = new RequeteIOBREP(dhco);
+                oos.writeObject(demande);
+                oos.flush();
+
+                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
+                System.out.println("Recu: " + rep.getCode());
+                return rep;
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class LoadContainerDoneTask extends AsyncTask<Void, Void, ReponseIOBREP>{
+
+        @Override
+        protected void onPostExecute(ReponseIOBREP result) {
+            if(result.getCode() == 200)
+            {
+                Intent intent = new Intent(LoadActivity.this, BoatSelectedActivity.class);
+                startActivity(intent);
+            }
+            else
+            {
+                System.out.println(result.get_message());
+            }
+
+        }
+
+        @Override
+        protected ReponseIOBREP doInBackground(Void... voids) {
+            ServerConnection sc = new ServerConnection();
+            System.out.println("connecté");
+
+            try {
+                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
+                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
+                DonneeEndContainerOut deco = new DonneeEndContainerOut(LoadActivity.this._boatId);
+                RequeteIOBREP demande = new RequeteIOBREP(deco);
                 oos.writeObject(demande);
                 oos.flush();
 
