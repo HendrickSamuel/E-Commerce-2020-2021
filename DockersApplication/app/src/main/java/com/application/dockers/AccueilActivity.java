@@ -16,6 +16,7 @@ import com.application.dockers.connection.ServerConnection;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
 
 import protocol.IOBREP.DonneeBoatArrived;
 import protocol.IOBREP.DonneeLogin;
@@ -33,6 +34,19 @@ public class AccueilActivity extends AppCompatActivity {
 
         if(this.getIntent().getExtras() != null && this.getIntent().getExtras().containsKey("user"))
             tw.setText(this.getIntent().getExtras().get("user").toString());
+
+        ((Button)this.findViewById(R.id.logs_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                        "AccueilActivity",
+                        Calendar.getInstance().getTime(),
+                        "Ouverture des logs");
+
+                Intent intent = new Intent(AccueilActivity.this, LogsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         ((Button)this.findViewById(R.id.boat_arrived_button)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +69,11 @@ public class AccueilActivity extends AppCompatActivity {
                             System.out.println("Recu: " + rep.getCode());
                             if(rep.getCode() == ReponseIOBREP.OK)
                             {
+                                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                                        "AccueilActivity",
+                                        Calendar.getInstance().getTime(),
+                                        "Arrivée du bateau " + ((EditText)findViewById(R.id.input_boat_id)).getText().toString());
+
                                 Intent intent = new Intent(AccueilActivity.this, BoatSelectedActivity.class);
                                 intent.putExtra("boatId",((DonneeBoatArrived)rep.get_chargeUtile()).getIdContainer());
                                 startActivity(intent);

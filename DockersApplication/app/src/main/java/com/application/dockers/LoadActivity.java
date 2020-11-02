@@ -86,7 +86,7 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
                 ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeGetContainers dl = new DonneeGetContainers("Paris","FIRST");
+                DonneeGetContainers dl = new DonneeGetContainers("Paris","FIRST", "OUT");
                 RequeteIOBREP demande = new RequeteIOBREP(dl);
                 oos.writeObject(demande);
                 oos.flush();

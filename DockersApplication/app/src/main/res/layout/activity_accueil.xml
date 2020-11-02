@@ -99,6 +99,20 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
+            android:id="@+id/logs_button"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:background="@color/colorAccent"
+            android:focusable="false"
+            android:text="logs"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
             android:id="@+id/logout_button"
             android:layout_width="250dp"
             android:layout_height="60dp"

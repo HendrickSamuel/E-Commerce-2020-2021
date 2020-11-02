@@ -2,18 +2,27 @@ package com.application.dockers;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.application.dockers.SQLite.DockersActivitySQLiteHelper;
 import com.application.dockers.connection.ServerConnection;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import protocol.IOBREP.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,45 +37,44 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 new Thread(new Runnable() {
+                    @SuppressLint("SimpleDateFormat")
                     @Override
                     public void run() {
-                        System.out.println("test");
                         ServerConnection sc = new ServerConnection();
                         sc.StartConnection("192.168.1.197",5000);
-                        System.out.println("connecté");
+                        DonneeLogin dl = new DonneeLogin(
+                                ((EditText)findViewById(R.id.login_username)).getText().toString(),
+                                ((EditText)findViewById(R.id.login_userpassword)).getText().toString());
+                        RequeteIOBREP demande = new RequeteIOBREP(dl);
 
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                            ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                            DonneeLogin dl = new DonneeLogin(
-                                    ((EditText)findViewById(R.id.login_username)).getText().toString(),
-                                    ((EditText)findViewById(R.id.login_userpassword)).getText().toString());
-                            RequeteIOBREP demande = new RequeteIOBREP(dl);
-                            oos.writeObject(demande);
-                            oos.flush();
+                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
 
-                            ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                            System.out.println("Recu: " + rep.getCode());
-                            if(rep.getCode() == ReponseIOBREP.OK)
-                            {
-                                Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
-                                intent.putExtra("user",((EditText)MainActivity.this.findViewById(R.id.login_username)).getText());
-                                startActivity(intent);
-                                finish(); //ou empecher dans le manifest ?
-                            }
-                            else
-                            {
-                                ((TextView)findViewById(R.id.textErreur)).setText(rep.get_message());
-                            }
+                        if(rep.getCode() == ReponseIOBREP.OK)
+                        {
+                            com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(MainActivity.this,
+                                    "MainActivity",
+                                    Calendar.getInstance().getTime(),
+                                    "Login de " + ((EditText)findViewById(R.id.login_username)).getText().toString());
 
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                            Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
+                            intent.putExtra("user",((EditText)MainActivity.this.findViewById(R.id.login_username)).getText());
+                            startActivity(intent);
+                            finish();
                         }
-                        System.out.println("fin");
+                        else
+                        {
+                            ((TextView)findViewById(R.id.textErreur)).setText(rep.get_message());
+                            try {
+                                sc.CloseConnection();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }).start();
             }
         });
+
 
     }
 }
