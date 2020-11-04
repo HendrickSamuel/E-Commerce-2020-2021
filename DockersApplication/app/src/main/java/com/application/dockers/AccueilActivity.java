@@ -48,6 +48,45 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        ((Button)this.findViewById(R.id.graphics_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                        "AccueilActivity",
+                        Calendar.getInstance().getTime(),
+                        "Visualisation des graphiques");
+
+                Intent intent = new Intent(AccueilActivity.this, GraphiquesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ((Button)this.findViewById(R.id.graphics_button_one)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                        "AccueilActivity",
+                        Calendar.getInstance().getTime(),
+                        "Visualisation des graphiques");
+
+                Intent intent = new Intent(AccueilActivity.this, MeanGraphiqueActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ((Button)this.findViewById(R.id.graphics_button_two)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                        "AccueilActivity",
+                        Calendar.getInstance().getTime(),
+                        "Visualisation des graphiques");
+
+                Intent intent = new Intent(AccueilActivity.this, GraphiquesWeeklyActivity.class);
+                startActivity(intent);
+            }
+        });
+
         ((Button)this.findViewById(R.id.boat_arrived_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -13,7 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LogsActivity"></activity>
+        <activity android:name=".GraphiquesWeeklyActivity"></activity>
+        <activity android:name=".MeanGraphiqueActivity" />
+        <activity android:name=".GraphiquesActivity" />
+        <activity android:name=".LogsActivity" />
         <activity android:name=".BoatSelectedActivity" />
         <activity android:name=".UnloadActivity" />
         <activity android:name=".LoadActivity" />

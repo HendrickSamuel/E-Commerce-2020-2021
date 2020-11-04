@@ -5,12 +5,16 @@
       <root url="jar://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new/Rserve.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new/REngine.jar!/" />
       <root url="file://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new" />
+      <root url="file://$PROJECT_DIR$/../../Rserve/client/java-new" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new/JRI/test" />
       <root url="file://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new/Rserve/test" />
+      <root url="file://$PROJECT_DIR$/../../Rserve/client/java-new/JRI/test" />
+      <root url="file://$PROJECT_DIR$/../../Rserve/client/java-new/Rserve/test" />
     </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../Rserve/client/java-new" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../../../../Program Files/R/Rserve/client/java-new" recursive="false" />
   </library>
 </component>
