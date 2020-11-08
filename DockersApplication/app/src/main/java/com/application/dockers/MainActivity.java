@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         ServerConnection sc = new ServerConnection();
 
-                        sc.StartConnection("192.168.1.197",5000);
+                        sc.StartConnection("192.168.1.3",5000);
 
                         DonneeLogin dl = new DonneeLogin(
                                 ((EditText)findViewById(R.id.login_username)).getText().toString(),

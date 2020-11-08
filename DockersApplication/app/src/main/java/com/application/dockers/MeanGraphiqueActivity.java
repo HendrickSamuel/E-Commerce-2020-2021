@@ -9,6 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.application.dockers.connection.ServerConnection;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -16,6 +21,7 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import protocol.IOBREP.Docker;
@@ -43,52 +49,47 @@ public class MeanGraphiqueActivity extends AppCompatActivity {
 
     private void openChartOne(List<Docker> dockers)
     {
-        DefaultRenderer rendererGlobal = new DefaultRenderer();
-
-        CategorySeries serieStatload = new CategorySeries("Loading Time");
-
-        rendererGlobal.setApplyBackgroundColor(true);
-        rendererGlobal.setBackgroundColor(Color.argb(100,50,50,50));
-        rendererGlobal.setZoomButtonsVisible(false);
-        rendererGlobal.setFitLegend(true);
-        rendererGlobal.setLegendTextSize(60);
+        PieChart piechart = findViewById(R.id.graphs_one);
+        ArrayList<PieEntry> entrees = new ArrayList<>();
 
         for(Docker doc : dockers)
         {
-            serieStatload.add(doc.getDockerName(), doc.getSeccondsToLoad());
-            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(colors[dockers.indexOf(doc)]);
-            rendererGlobal.addSeriesRenderer(renderer);
+            entrees.add(new PieEntry((int)doc.getSeccondsToLoad(), doc.getDockerName()));
+            System.out.println(doc.getDockerName() + " - " + doc.getSeccondsToLoad());
         }
 
-        GraphicalView vue = ChartFactory.getPieChartView(this, serieStatload, rendererGlobal);
-        LinearLayout layout = (LinearLayout)findViewById(R.id.graphs_one);
-        layout.addView(vue, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        PieDataSet pieDataSet = new PieDataSet(entrees, "Temps en entrée");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        pieDataSet.setValueTextColor(Color.BLACK);
+        pieDataSet.setValueTextSize(16f);
+
+        PieData pieData = new PieData(pieDataSet);
+        piechart.setData(pieData);
+        piechart.getDescription().setEnabled(false);
+        piechart.setCenterText("Temps entree en seccondes");
+        piechart.animate();
     }
 
     private void openChartTwo(List<Docker> dockers)
     {
-        DefaultRenderer rendererGlobal = new DefaultRenderer();
-
-        CategorySeries serieStatunload = new CategorySeries("Unloading Time");
-
-        rendererGlobal.setApplyBackgroundColor(true);
-        rendererGlobal.setBackgroundColor(Color.argb(100,50,50,50));
-        rendererGlobal.setZoomButtonsVisible(false);
-        rendererGlobal.setFitLegend(true);
-        rendererGlobal.setLegendTextSize(60);
+        PieChart piechart = findViewById(R.id.graphs_two);
+        ArrayList<PieEntry> entrees = new ArrayList<>();
 
         for(Docker doc : dockers)
         {
-            serieStatunload.add(doc.getDockerName(), doc.getSeccondsToUnload());
-            SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(colors[dockers.indexOf(doc)]);
-            rendererGlobal.addSeriesRenderer(renderer);
+            entrees.add(new PieEntry((float)doc.getSeccondsToUnload(), doc.getDockerName()));
         }
 
-        GraphicalView vue = ChartFactory.getPieChartView(this, serieStatunload, rendererGlobal);
-        LinearLayout layout = (LinearLayout)findViewById(R.id.graphs_two);
-        layout.addView(vue, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        PieDataSet pieDataSet = new PieDataSet(entrees, "Temps en sortie");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        pieDataSet.setValueTextColor(Color.BLACK);
+        pieDataSet.setValueTextSize(16f);
+
+        PieData pieData = new PieData(pieDataSet);
+        piechart.setData(pieData);
+        piechart.getDescription().setEnabled(false);
+        piechart.setCenterText("Temps sortie en seccondes");
+        piechart.animate();
     }
 
     private class GetGraphOne extends AsyncTask<Void, Void, ReponseIOBREP>
