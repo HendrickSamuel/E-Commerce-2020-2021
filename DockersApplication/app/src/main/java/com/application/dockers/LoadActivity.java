@@ -31,6 +31,10 @@ import protocol.IOBREP.RequeteIOBREP;
 
 public class LoadActivity extends AppCompatActivity implements View.OnClickListener {
     private String _boatId;
+    private String destination;
+    private String order;
+
+    private int selectedId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,9 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_load);
 
         this._boatId = this.getIntent().getExtras().get("boatId").toString();
+        this.destination = this.getIntent().getExtras().get("destination").toString();
+        this.order = this.getIntent().getExtras().get("order").toString();
+
         ((Button)this.findViewById(R.id.button_loading_done)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,8 +57,8 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(this, ""+v.getId()+" - " + ((Button)v).getText(), Toast.LENGTH_LONG).show();
         new LoadContainerTask().execute(((Button)v).getText().toString());
+        selectedId = v.getId();
     }
 
     private class GetContainersTask extends AsyncTask<Void, Void, ReponseIOBREP> {
@@ -79,26 +86,14 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
-            System.out.println("test");
             ServerConnection sc = new ServerConnection();
-            System.out.println("connecté");
+            sc.TestConnection(LoadActivity.this);
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeGetContainers dl = new DonneeGetContainers("Paris","FIRST", "OUT");
-                RequeteIOBREP demande = new RequeteIOBREP(dl);
-                oos.writeObject(demande);
-                oos.flush();
+            DonneeGetContainers dl = new DonneeGetContainers(LoadActivity.this.destination,LoadActivity.this.order, "OUT");
+            RequeteIOBREP demande = new RequeteIOBREP(dl);
 
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu: " + rep.getCode());
-                return rep;
+            return sc.SendAndReceiveMessage(demande);
 
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
     }
 
@@ -110,10 +105,8 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
             {
                 if(result.get_chargeUtile() instanceof DonneeHandleContainerOut)
                 {
-                    DonneeHandleContainerOut dhco = (DonneeHandleContainerOut)result.get_chargeUtile();
-                    LinearLayout ll = findViewById(R.id.ll_boat_totreated);
                     LinearLayout llok = findViewById(R.id.ll_boat_treated);
-                    View v = LoadActivity.this.findViewById(0);
+                    View v = LoadActivity.this.findViewById(selectedId);
 
                     ViewGroup parent = (ViewGroup) v.getParent();
 
@@ -135,24 +128,11 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected ReponseIOBREP doInBackground(String... strings) {
             ServerConnection sc = new ServerConnection();
-            System.out.println("connecté");
+            sc.TestConnection(LoadActivity.this);
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeHandleContainerOut dhco = new DonneeHandleContainerOut(strings[0]);
-                RequeteIOBREP demande = new RequeteIOBREP(dhco);
-                oos.writeObject(demande);
-                oos.flush();
+            RequeteIOBREP demande = new RequeteIOBREP(new DonneeHandleContainerOut(strings[0]));
+            return sc.SendAndReceiveMessage(demande);
 
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu: " + rep.getCode());
-                return rep;
-
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
     }
 
@@ -175,24 +155,10 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
             ServerConnection sc = new ServerConnection();
-            System.out.println("connecté");
+            sc.TestConnection(LoadActivity.this);
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeEndContainerOut deco = new DonneeEndContainerOut(LoadActivity.this._boatId);
-                RequeteIOBREP demande = new RequeteIOBREP(deco);
-                oos.writeObject(demande);
-                oos.flush();
-
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu: " + rep.getCode());
-                return rep;
-
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
+            RequeteIOBREP demande = new RequeteIOBREP(new DonneeEndContainerOut(LoadActivity.this._boatId));
+            return sc.SendAndReceiveMessage(demande);
         }
     }
 }

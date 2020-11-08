@@ -136,6 +136,7 @@ public class GraphiquesWeeklyActivity extends AppCompatActivity {
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
             ServerConnection sc = new ServerConnection();
+            sc.TestConnection(GraphiquesWeeklyActivity.this);
             RequeteIOBREP req = new RequeteIOBREP(new protocol.IOBREP.DonneeGetLoadUnloadStatsWeekly());
             return sc.SendAndReceiveMessage(req);
         }

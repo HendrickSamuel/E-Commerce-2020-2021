@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         ServerConnection sc = new ServerConnection();
+
                         sc.StartConnection("192.168.1.197",5000);
+
                         DonneeLogin dl = new DonneeLogin(
                                 ((EditText)findViewById(R.id.login_username)).getText().toString(),
                                 ((EditText)findViewById(R.id.login_userpassword)).getText().toString());
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         });
-
-
     }
+
+
 }

@@ -30,6 +30,8 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
 
     private String _boatId;
 
+    private int selectedId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +50,8 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(this, ""+v.getId()+" - " + ((Button)v).getText(), Toast.LENGTH_LONG).show();
         new UnloadActivity.UnLoadContainerTask().execute(((Button)v).getText().toString());
+        selectedId = v.getId();
     }
 
     private class GetContainersTask extends AsyncTask<Void, Void, ReponseIOBREP> {
@@ -78,6 +80,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
             ServerConnection sc = new ServerConnection();
+            sc.TestConnection(UnloadActivity.this);
 
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
@@ -109,7 +112,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
                 {
                     DonneeHandleContainerIn dhci = (DonneeHandleContainerIn)result.get_chargeUtile();
                     LinearLayout llok = findViewById(R.id.ll_boat_treated);
-                    View v = UnloadActivity.this.findViewById(0);
+                    View v = UnloadActivity.this.findViewById(selectedId);
 
                     ViewGroup parent = (ViewGroup) v.getParent();
 
@@ -131,24 +134,10 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         protected ReponseIOBREP doInBackground(String... strings) {
             ServerConnection sc = new ServerConnection();
-            System.out.println("connecté");
+            sc.TestConnection(UnloadActivity.this);
+            RequeteIOBREP demande = new RequeteIOBREP(new DonneeHandleContainerIn(strings[0]));
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeHandleContainerIn dhci = new DonneeHandleContainerIn(strings[0]);
-                RequeteIOBREP demande = new RequeteIOBREP(dhci);
-                oos.writeObject(demande);
-                oos.flush();
-
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu: " + rep.getCode());
-                return rep;
-
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return sc.SendAndReceiveMessage(demande);
         }
     }
 
@@ -171,24 +160,10 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
             ServerConnection sc = new ServerConnection();
-            System.out.println("connecté");
+            sc.TestConnection(UnloadActivity.this);
+            RequeteIOBREP demande = new RequeteIOBREP(new DonneeEndContainerIn(UnloadActivity.this._boatId));
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeEndContainerIn deco = new DonneeEndContainerIn(UnloadActivity.this._boatId);
-                RequeteIOBREP demande = new RequeteIOBREP(deco);
-                oos.writeObject(demande);
-                oos.flush();
-
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu: " + rep.getCode());
-                return rep;
-
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return sc.SendAndReceiveMessage(demande);
         }
     }
 }

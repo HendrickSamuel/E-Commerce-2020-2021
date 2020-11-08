@@ -113,6 +113,7 @@ public class MeanGraphiqueActivity extends AppCompatActivity {
         @Override
         protected ReponseIOBREP doInBackground(Void... voids) {
             ServerConnection sc = new ServerConnection();
+            sc.TestConnection(MeanGraphiqueActivity.this);
             RequeteIOBREP req = new RequeteIOBREP(new protocol.IOBREP.DonneeGetLoadUnloadTime());
             return sc.SendAndReceiveMessage(req);
         }

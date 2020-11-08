@@ -70,6 +70,20 @@
             android:hint="@string/id_boat"
             android:inputType="textPersonName" />
 
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/destination" />
+
+        <EditText
+            android:id="@+id/input_destination_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/id_destination"
+            android:inputType="textPersonName" />
+
         <Button
             android:id="@+id/boat_arrived_button"
             android:layout_width="250dp"
@@ -129,7 +143,7 @@
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="50dp"
             android:background="@color/colorAccent"
             android:focusable="false"
             android:text="logs"

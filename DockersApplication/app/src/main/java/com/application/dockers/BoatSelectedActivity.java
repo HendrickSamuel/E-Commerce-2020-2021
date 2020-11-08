@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.application.dockers.connection.ServerConnection;
@@ -24,7 +25,6 @@ import protocol.IOBREP.ReponseIOBREP;
 import protocol.IOBREP.RequeteIOBREP;
 
 public class BoatSelectedActivity extends AppCompatActivity {
-    private String _boatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +32,28 @@ public class BoatSelectedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_boat_selected);
 
         if(this.getIntent().getExtras() != null && this.getIntent().getExtras().containsKey("boatId"))
-            this._boatId = this.getIntent().getExtras().get("boatId").toString();
-        else
-            this._boatId = "2-KEV-123";
+            LocalInfos.boatId = this.getIntent().getExtras().get("boatId").toString();
+
+        if(this.getIntent().getExtras() != null && this.getIntent().getExtras().containsKey("destination"))
+            LocalInfos.destination = this.getIntent().getExtras().get("destination").toString();
+
+        ((Switch)this.findViewById(R.id.switch1)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.isEnabled())
+                    LocalInfos.order = "FIRST";
+                else
+                    LocalInfos.order = "RAND";
+            }
+        });
 
         ((Button)this.findViewById(R.id.accueil_load_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(BoatSelectedActivity.this, LoadActivity.class);
-                intent.putExtra("boatId", BoatSelectedActivity.this._boatId);
+                intent.putExtra("boatId", LocalInfos.boatId);
+                intent.putExtra("destination", LocalInfos.destination);
+                intent.putExtra("order", LocalInfos.order);
                 startActivity(intent);
             }
         });
@@ -49,7 +62,7 @@ public class BoatSelectedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(BoatSelectedActivity.this, UnloadActivity.class);
-                intent.putExtra("boatId", BoatSelectedActivity.this._boatId);
+                intent.putExtra("boatId", LocalInfos.boatId);
                 startActivity(intent);
             }
         });
@@ -61,39 +74,28 @@ public class BoatSelectedActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("test");
                         ServerConnection sc = new ServerConnection();
+                        sc.TestConnection(BoatSelectedActivity.this);
 
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                            ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                            DoneeBoatLeft dba = new DoneeBoatLeft(BoatSelectedActivity.this._boatId);
-                            RequeteIOBREP demande = new RequeteIOBREP(dba);
-                            oos.writeObject(demande);
-                            oos.flush();
+                        RequeteIOBREP demande = new RequeteIOBREP(new DoneeBoatLeft(LocalInfos.boatId));
+                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
 
-                            ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                            System.out.println("Recu: " + rep.getCode());
-                            if(rep.getCode() == ReponseIOBREP.OK)
-                            {
-                                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(BoatSelectedActivity.this,
-                                        "BoatSelectedActivity",
-                                        Calendar.getInstance().getTime(),
-                                        "Départ du bateau " + BoatSelectedActivity.this._boatId);
+                        System.out.println("Recu: " + rep.getCode());
+                        if(rep.getCode() == ReponseIOBREP.OK)
+                        {
+                            com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(BoatSelectedActivity.this,
+                                    "BoatSelectedActivity",
+                                    Calendar.getInstance().getTime(),
+                                    "Départ du bateau " + LocalInfos.boatId);
 
-                                Intent intent = new Intent(BoatSelectedActivity.this, AccueilActivity.class);
-                                intent.putExtra("boatId", BoatSelectedActivity.this._boatId);
-                                startActivity(intent);
-                            }
-                            else
-                            {
-                                Toast.makeText(BoatSelectedActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                            Intent intent = new Intent(BoatSelectedActivity.this, AccueilActivity.class);
+                            startActivity(intent);
                         }
-                        System.out.println("fin");
+                        else
+                        {
+                            Toast.makeText(BoatSelectedActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 }).start();
             }

@@ -1,5 +1,6 @@
 package com.application.dockers.connection;
 
+import android.content.Context;
 import android.content.Intent;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,7 +14,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import protocol.IOBREP.DonneeLogin;
 import protocol.IOBREP.ReponseIOBREP;
 import protocol.IOBREP.RequeteIOBREP;
 
@@ -45,6 +45,15 @@ public class ServerConnection {
 
     public Socket get_socket() {
         return _socket;
+    }
+
+    public void TestConnection(Context context)
+    {
+        if(_socket == null || _socket.isClosed())
+        {
+            Intent intent = new Intent(context, MainActivity.class);
+            context.startActivity(intent);
+        }
     }
 
     public ReponseIOBREP SendAndReceiveMessage(RequeteIOBREP requete)

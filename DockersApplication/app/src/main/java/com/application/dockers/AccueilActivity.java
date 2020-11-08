@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +31,12 @@ public class AccueilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
 
+        //Mettre le nom d'utilisateur en haut pour dire coucou
         TextView tw = this.findViewById(R.id.accueil_username);
-
         if(this.getIntent().getExtras() != null && this.getIntent().getExtras().containsKey("user"))
             tw.setText(this.getIntent().getExtras().get("user").toString());
 
+        //Aller sur l'activité des logs
         ((Button)this.findViewById(R.id.logs_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,6 +50,7 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        //redirection graphique 1
         ((Button)this.findViewById(R.id.graphics_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +64,7 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        //redirection graphique 2
         ((Button)this.findViewById(R.id.graphics_button_one)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +78,7 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        //Redirection graphique 3
         ((Button)this.findViewById(R.id.graphics_button_two)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,49 +92,46 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        //Arrivee d'un bateau
         ((Button)this.findViewById(R.id.boat_arrived_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("test");
                         ServerConnection sc = new ServerConnection();
+                        sc.TestConnection(AccueilActivity.this);
+                        RequeteIOBREP demande = new RequeteIOBREP(new DonneeBoatArrived(((EditText)findViewById(R.id.input_boat_id)).getText().toString()));
 
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                            ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                            DonneeBoatArrived dba = new DonneeBoatArrived(((EditText)findViewById(R.id.input_boat_id)).getText().toString());
-                            RequeteIOBREP demande = new RequeteIOBREP(dba);
-                            oos.writeObject(demande);
-                            oos.flush();
+                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
 
-                            ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                            System.out.println("Recu: " + rep.getCode());
-                            if(rep.getCode() == ReponseIOBREP.OK)
-                            {
-                                com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
-                                        "AccueilActivity",
-                                        Calendar.getInstance().getTime(),
-                                        "Arrivée du bateau " + ((EditText)findViewById(R.id.input_boat_id)).getText().toString());
+                        System.out.println("Recu: " + rep.getCode());
+                        if(rep.getCode() == ReponseIOBREP.OK)
+                        {
+                            com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                                    "AccueilActivity",
+                                    Calendar.getInstance().getTime(),
+                                    "Arrivée du bateau " + ((EditText)findViewById(R.id.input_boat_id)).getText().toString());
 
-                                Intent intent = new Intent(AccueilActivity.this, BoatSelectedActivity.class);
-                                intent.putExtra("boatId",((DonneeBoatArrived)rep.get_chargeUtile()).getIdContainer());
-                                startActivity(intent);
-                            }
-                            else
-                            {
-                                Toast.makeText(AccueilActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                            Intent intent = new Intent(AccueilActivity.this, BoatSelectedActivity.class);
+                            intent.putExtra("boatId",((EditText)findViewById(R.id.input_boat_id)).getText().toString());
+                            intent.putExtra("destination",((EditText)findViewById(R.id.input_destination_id)).getText().toString());
+                            startActivity(intent);
                         }
+                        else
+                        {
+                            Toast.makeText(AccueilActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
+                        }
+
                         System.out.println("fin");
                     }
                 }).start();
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        return;
     }
 }

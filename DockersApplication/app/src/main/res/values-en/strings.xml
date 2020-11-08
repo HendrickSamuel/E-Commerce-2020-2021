@@ -13,4 +13,7 @@
     <string name="load">Load</string>
     <string name="unload">Unload</string>
     <string name="boat_Left">Boat departure</string>
+
+    <string name="destination">Destination</string>
+    <string name="id_destination">Destination</string>
 </resources>

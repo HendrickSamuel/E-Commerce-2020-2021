@@ -33,6 +33,13 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:text="FIRST" />
+
     <Button
         android:id="@+id/accueil_load_button"
         android:layout_width="250dp"
