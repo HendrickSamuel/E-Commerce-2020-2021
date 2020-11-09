@@ -39,6 +39,8 @@ public class GraphiquesWeeklyActivity extends AppCompatActivity {
     }
 
     private void openChartOne(List<Week> weeks){
+        if(weeks.size() < 1)
+            return;
 
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 
@@ -138,7 +140,7 @@ public class GraphiquesWeeklyActivity extends AppCompatActivity {
             ServerConnection sc = new ServerConnection();
             sc.TestConnection(GraphiquesWeeklyActivity.this);
             RequeteIOBREP req = new RequeteIOBREP(new protocol.IOBREP.DonneeGetLoadUnloadStatsWeekly());
-            return sc.SendAndReceiveMessage(req);
+            return sc.SendAndReceiveMessage(GraphiquesWeeklyActivity.this, req);
         }
     }
 }

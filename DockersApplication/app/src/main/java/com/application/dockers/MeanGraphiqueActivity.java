@@ -68,6 +68,8 @@ public class MeanGraphiqueActivity extends AppCompatActivity {
         piechart.getDescription().setEnabled(false);
         piechart.setCenterText("Temps entree en seccondes");
         piechart.animate();
+        piechart.notifyDataSetChanged();
+        piechart.invalidate();
     }
 
     private void openChartTwo(List<Docker> dockers)
@@ -90,6 +92,8 @@ public class MeanGraphiqueActivity extends AppCompatActivity {
         piechart.getDescription().setEnabled(false);
         piechart.setCenterText("Temps sortie en seccondes");
         piechart.animate();
+        piechart.notifyDataSetChanged();
+        piechart.invalidate();
     }
 
     private class GetGraphOne extends AsyncTask<Void, Void, ReponseIOBREP>
@@ -116,7 +120,7 @@ public class MeanGraphiqueActivity extends AppCompatActivity {
             ServerConnection sc = new ServerConnection();
             sc.TestConnection(MeanGraphiqueActivity.this);
             RequeteIOBREP req = new RequeteIOBREP(new protocol.IOBREP.DonneeGetLoadUnloadTime());
-            return sc.SendAndReceiveMessage(req);
+            return sc.SendAndReceiveMessage(MeanGraphiqueActivity.this, req);
         }
     }
 }

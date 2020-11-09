@@ -123,7 +123,7 @@ public class GraphiquesActivity extends AppCompatActivity {
             ServerConnection sc = new ServerConnection();
             sc.TestConnection(GraphiquesActivity.this);
             RequeteIOBREP req = new RequeteIOBREP(new protocol.IOBREP.DonneeGetLoadUnloadStats());
-            return sc.SendAndReceiveMessage(req);
+            return sc.SendAndReceiveMessage(GraphiquesActivity.this, req);
         }
     }
 

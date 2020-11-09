@@ -70,35 +70,45 @@ public class BoatSelectedActivity extends AppCompatActivity {
         ((Button)this.findViewById(R.id.boat_left_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ServerConnection sc = new ServerConnection();
-                        sc.TestConnection(BoatSelectedActivity.this);
-
-                        RequeteIOBREP demande = new RequeteIOBREP(new DoneeBoatLeft(LocalInfos.boatId));
-                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
-
-                        System.out.println("Recu: " + rep.getCode());
-                        if(rep.getCode() == ReponseIOBREP.OK)
-                        {
-                            com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(BoatSelectedActivity.this,
-                                    "BoatSelectedActivity",
-                                    Calendar.getInstance().getTime(),
-                                    "Départ du bateau " + LocalInfos.boatId);
-
-                            Intent intent = new Intent(BoatSelectedActivity.this, AccueilActivity.class);
-                            startActivity(intent);
-                        }
-                        else
-                        {
-                            Toast.makeText(BoatSelectedActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                }).start();
+                BoatLeft();
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        BoatLeft();
+    }
+
+    private void BoatLeft()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerConnection sc = new ServerConnection();
+                sc.TestConnection(BoatSelectedActivity.this);
+
+                RequeteIOBREP demande = new RequeteIOBREP(new DoneeBoatLeft(LocalInfos.boatId));
+                ReponseIOBREP rep = sc.SendAndReceiveMessage(BoatSelectedActivity.this, demande);
+
+                System.out.println("Recu: " + rep.getCode());
+                if(rep.getCode() == ReponseIOBREP.OK)
+                {
+                    com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(BoatSelectedActivity.this,
+                            "BoatSelectedActivity",
+                            Calendar.getInstance().getTime(),
+                            "Départ du bateau " + LocalInfos.boatId);
+
+                    Intent intent = new Intent(BoatSelectedActivity.this, AccueilActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(BoatSelectedActivity.this, rep.get_message(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }).start();
+    }
+
 }

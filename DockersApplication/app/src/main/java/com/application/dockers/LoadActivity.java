@@ -56,6 +56,11 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onBackPressed() {
+        Toast.makeText(LoadActivity.this, "Please finish to Load before leaving", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void onClick(View v) {
         new LoadContainerTask().execute(((Button)v).getText().toString());
         selectedId = v.getId();
@@ -92,7 +97,7 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
             DonneeGetContainers dl = new DonneeGetContainers(LoadActivity.this.destination,LoadActivity.this.order, "OUT");
             RequeteIOBREP demande = new RequeteIOBREP(dl);
 
-            return sc.SendAndReceiveMessage(demande);
+            return sc.SendAndReceiveMessage(LoadActivity.this, demande);
 
         }
     }
@@ -131,7 +136,7 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
             sc.TestConnection(LoadActivity.this);
 
             RequeteIOBREP demande = new RequeteIOBREP(new DonneeHandleContainerOut(strings[0]));
-            return sc.SendAndReceiveMessage(demande);
+            return sc.SendAndReceiveMessage(LoadActivity.this, demande);
 
         }
     }
@@ -158,7 +163,7 @@ public class LoadActivity extends AppCompatActivity implements View.OnClickListe
             sc.TestConnection(LoadActivity.this);
 
             RequeteIOBREP demande = new RequeteIOBREP(new DonneeEndContainerOut(LoadActivity.this._boatId));
-            return sc.SendAndReceiveMessage(demande);
+            return sc.SendAndReceiveMessage(LoadActivity.this, demande);
         }
     }
 }

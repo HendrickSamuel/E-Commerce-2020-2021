@@ -49,6 +49,11 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    public void onBackPressed() {
+        Toast.makeText(UnloadActivity.this, "Please finish to Load before leaving", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void onClick(View v) {
         new UnloadActivity.UnLoadContainerTask().execute(((Button)v).getText().toString());
         selectedId = v.getId();
@@ -57,23 +62,30 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
     private class GetContainersTask extends AsyncTask<Void, Void, ReponseIOBREP> {
 
         protected void onPostExecute(ReponseIOBREP result) {
-            if(result.get_chargeUtile() instanceof DonneeGetContainers)
+            if(result.getCode() == 200)
             {
-                LinearLayout ll = findViewById(R.id.ll_boat_totreated);
-
-                DonneeGetContainers dgc = (DonneeGetContainers)result.get_chargeUtile();
-                int i = 0;
-                for(Container cont : dgc.get_containers())
+                if(result.get_chargeUtile() instanceof DonneeGetContainers)
                 {
-                    Button btn = new Button(UnloadActivity.this);
-                    btn.setText(cont.getId());
-                    btn.setId(i);
-                    btn.setOnClickListener(UnloadActivity.this);
-                    btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-                    ll.addView(btn);
-                    i++;
+                    LinearLayout ll = findViewById(R.id.ll_boat_totreated);
+
+                    DonneeGetContainers dgc = (DonneeGetContainers)result.get_chargeUtile();
+                    int i = 0;
+                    for(Container cont : dgc.get_containers())
+                    {
+                        Button btn = new Button(UnloadActivity.this);
+                        btn.setText(cont.getId());
+                        btn.setId(i);
+                        btn.setOnClickListener(UnloadActivity.this);
+                        btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT));
+                        ll.addView(btn);
+                        i++;
+                    }
                 }
+            }
+            else
+            {
+                Toast.makeText(UnloadActivity.this, result.get_message(), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -82,23 +94,13 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
             ServerConnection sc = new ServerConnection();
             sc.TestConnection(UnloadActivity.this);
 
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(sc.get_socket().getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(sc.get_socket().getInputStream());
-                DonneeGetContainers dl = new DonneeGetContainers("parc","FIRST", "IN");
-                dl.setIdBateau(UnloadActivity.this._boatId);
-                RequeteIOBREP demande = new RequeteIOBREP(dl);
-                oos.writeObject(demande);
-                oos.flush();
+            DonneeGetContainers dl = new DonneeGetContainers("","", "IN");
+            dl.setIdBateau(UnloadActivity.this._boatId);
 
-                ReponseIOBREP rep = (ReponseIOBREP)ois.readObject();
-                System.out.println("Recu liste: " + rep.getCode());
-                return rep;
+            RequeteIOBREP demande = new RequeteIOBREP(dl);
 
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return sc.SendAndReceiveMessage(UnloadActivity.this, demande);
+
         }
     }
 
@@ -126,7 +128,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                System.out.println(result.get_message());
+                Toast.makeText(UnloadActivity.this, result.get_message(), Toast.LENGTH_LONG).show();
             }
 
         }
@@ -137,7 +139,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
             sc.TestConnection(UnloadActivity.this);
             RequeteIOBREP demande = new RequeteIOBREP(new DonneeHandleContainerIn(strings[0]));
 
-            return sc.SendAndReceiveMessage(demande);
+            return sc.SendAndReceiveMessage(UnloadActivity.this, demande);
         }
     }
 
@@ -152,7 +154,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                System.out.println(result.get_message());
+                Toast.makeText(UnloadActivity.this, result.get_message(), Toast.LENGTH_LONG).show();
             }
 
         }
@@ -163,7 +165,7 @@ public class UnloadActivity extends AppCompatActivity implements View.OnClickLis
             sc.TestConnection(UnloadActivity.this);
             RequeteIOBREP demande = new RequeteIOBREP(new DonneeEndContainerIn(UnloadActivity.this._boatId));
 
-            return sc.SendAndReceiveMessage(demande);
+            return sc.SendAndReceiveMessage(UnloadActivity.this, demande);
         }
     }
 }
