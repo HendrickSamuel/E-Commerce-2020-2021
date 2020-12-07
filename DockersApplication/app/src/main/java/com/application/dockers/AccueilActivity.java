@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +48,26 @@ public class AccueilActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(AccueilActivity.this, LogsActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        ((Button)this.findViewById(R.id.logout_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServerConnection sc = new ServerConnection();
+                try {
+                    sc.CloseConnection();
+
+                    com.application.dockers.SQLite.SQLiteDataBase.InsertActivity(AccueilActivity.this,
+                            "AccueilActivity",
+                            Calendar.getInstance().getTime(),
+                            "Lougout de l'utilisateur");
+
+                    Intent intent = new Intent(AccueilActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } catch (IOException e) {
+                    Toast.makeText(AccueilActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -99,11 +120,13 @@ public class AccueilActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        Looper.prepare();
+
                         ServerConnection sc = new ServerConnection();
                         sc.TestConnection(AccueilActivity.this);
                         RequeteIOBREP demande = new RequeteIOBREP(new DonneeBoatArrived(((EditText)findViewById(R.id.input_boat_id)).getText().toString()));
 
-                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
+                        ReponseIOBREP rep = sc.SendAndReceiveMessage(AccueilActivity.this, demande);
 
                         System.out.println("Recu: " + rep.getCode());
                         if(rep.getCode() == ReponseIOBREP.OK)

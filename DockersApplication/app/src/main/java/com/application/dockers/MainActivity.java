@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                                 ((EditText)findViewById(R.id.login_userpassword)).getText().toString());
                         RequeteIOBREP demande = new RequeteIOBREP(dl);
 
-                        ReponseIOBREP rep = sc.SendAndReceiveMessage(demande);
+                        ReponseIOBREP rep = sc.SendAndReceiveMessage(MainActivity.this, demande);
 
                         if(rep.getCode() == ReponseIOBREP.OK)
                         {

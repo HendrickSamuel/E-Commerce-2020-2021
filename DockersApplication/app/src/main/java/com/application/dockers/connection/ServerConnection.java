@@ -56,7 +56,7 @@ public class ServerConnection {
         }
     }
 
-    public ReponseIOBREP SendAndReceiveMessage(RequeteIOBREP requete)
+    public ReponseIOBREP SendAndReceiveMessage(Context context, RequeteIOBREP requete)
     {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(_socket.getOutputStream());
@@ -69,7 +69,8 @@ public class ServerConnection {
             return rep;
 
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            Intent intent = new Intent(context, MainActivity.class);
+            context.startActivity(intent);
             return new ReponseIOBREP(ReponseIOBREP.NOK, null, e.getMessage());
         }
     }
