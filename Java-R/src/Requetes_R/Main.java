@@ -5,6 +5,7 @@ import org.rosuda.REngine.Rserve.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main
@@ -22,11 +23,24 @@ public class Main
 
     public static void main(String[] args) throws RserveException, REXPMismatchException
     {
-        //String chemin = "C:/Users/delav/Documents/3eme annee/Technologie de l'e-commerce et mobiles/Technologie de l'e-commerce et mobiles Labo/";
-        String chemin = "D:/Documents/Seraing/2020-2021/E-COMMERCE/";
+        Process process = null;
+
+        String chemin = "C:/Users/delav/Documents/3eme_annee/Technologie de l'e-commerce et mobiles/Technologie de l'e-commerce et mobiles Labo/";
+        //String chemin = "D:/Documents/Seraing/2020-2021/E-COMMERCE/";
         JFrame fen = creeFenetre();
 
+        try
+        {
+            process = new ProcessBuilder("C:\\Program Files\\R\\R-3.4.2\\bin\\i386\\Rserve.exe").start();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("Demarrage du serveur Rserve");
+
         RConnection conn = new RConnection("localhost");
+        System.out.println("Connexion au serveur Rserve");
 
         conn.voidEval("setwd(\"" + chemin +"\")");
         conn.voidEval("batracie<-read.table(\"sante_batracie_2.csv\", sep=\",\", dec =\".\", header = T)");
@@ -183,6 +197,14 @@ public class Main
         x = conn.eval("res$adj.r.squared");
         System.out.println(ANSI_BLUE + "Adjusted R squared: " + ANSI_RESET + x.asDouble());
 
+
+
+
+        conn.close();
+        System.out.println("Deconnexion du serveur Rserve");
+        process.destroy();
+        process = null;
+        System.out.println("Arret du serveur Rserve");
     }
 
     static JFrame creeFenetre()

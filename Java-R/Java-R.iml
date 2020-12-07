@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="RserveEngine" level="project" />
+    <orderEntry type="library" name="REngine" level="project" />
+    <orderEntry type="library" name="Rserve" level="project" />
   </component>
 </module>
